@@ -1,0 +1,60 @@
+﻿@using PagedList.Mvc;
+@using PagedList;
+@model IPagedList<BS_23.Models.BS_post_parent_t>
+
+@{
+    ViewBag.Title = "FeedbackReport";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Feedback Report</h2>
+
+<p>
+    @using (@Html.BeginForm("FeedbackReport", "Report", FormMethod.Get))
+    {
+        @Html.TextBox("search") <input type="submit" value="search" />
+    }
+</p>
+
+<table class="table table-bordered table-striped" style="border:1px">
+
+    @foreach (var post in Model)
+    {
+        <tr>
+            <td style="border:1px">
+                <table class="table table-bordered table-striped" style="border:1px;">
+                    <tr style="color:#3CABCC;font:bold 17px arial;">
+                        <td style="width:330px;">
+                            @post.PostDetails
+                        </td>
+                        <td style="text-align:center">
+                            @post.BS_user_parent_t.UserName
+                        </td>
+                        <td style="text-align:center">
+                            @post.PostDate
+                        </td>
+                        <td style="text-align:center">
+                            @post.BS_comment_parent_t.Count <text>Comments</text>
+                        </td>
+                    </tr>
+                </table>
+                
+                @foreach (var commnet in post.BS_comment_parent_t)
+                {
+                    <table class="table table-bordered table-striped" style="border:1px;text-align:center">
+                        <tr style="font:bold 17px arial;">
+                            <td>@commnet.CommentDetails</td>
+                            <td>@commnet.BS_user_parent_t.UserName</td>
+                            <td>@commnet.CommentDate</td>
+                            <td>@commnet.BS_like_parent_t.Count<span><i class="glyphicon glyphicon-arrow-up" style="color:forestgreen"></i></span></td>
+                            <td>@commnet.BS_dislike_parent_t.Count<span><i class="glyphicon glyphicon-arrow-down" style="color:orangered"></i></span></td>
+                        </tr>
+                    </table>
+                }
+            </td>
+        </tr>
+    }
+
+</table>
+@Html.PagedListPager(Model, page => Url.Action("FeedbackReport", new { page, search = Request.QueryString["search"] })
+, new PagedListRenderOptions() { Display = PagedListDisplayMode.IfNeeded, DisplayPageCountAndCurrentLocation = true })
